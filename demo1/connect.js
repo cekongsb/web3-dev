@@ -19,7 +19,7 @@ const web3 = new Web3(provider);
 
 const txHash = "0xaafa83433918500a419d6fa7f66dcae50ecb5d424e5b671bc314d739d17eeae7";
 
-web3.eth.getTransaction(txHash, function(e,transaction) {
+web3.eth.getTransaction(txHash, function(e, transaction) {
     if(e || !transaction) { console.log("transaction not found")}
     web3.eth.getBlock(transaction.blockHash, true, function(e, block) {
         if(e || !block) {   console.log("block not found")  }
@@ -33,13 +33,16 @@ web3.eth.getTransaction(txHash, function(e,transaction) {
             })
         }, function(e, r){
             txTrie.findPath(rlp.encode(transaction.transactionIndex), function(e, rawTxNode, remainder, stack) {              
+                console.log("rawTxNode:"+rawTxNode);
+                console.log("stack:"+stack);
+                
                 let blockHash = Buffer.from(transaction.blockHash.slice(2), 'hex');
                 let blockNumber = block.number;
                 let header = getRawHeader(block);
                 let parentNodes = rawStack(stack);
                 let path = rlp.encode(transaction.transactionIndex);
                 let value = rlp.decode(rawTxNode.value);
-                
+
                 let tx_hex = rlp.encode(value).toString('hex');
                 let tx_root_hex = rlp.encode(header[4]).toString('hex');
                 let txmerkleproof_hex = rlp.encode(parentNodes).toString('hex');
